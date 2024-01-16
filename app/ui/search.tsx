@@ -1,14 +1,36 @@
 'use client';
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+// import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 export default function Search({ placeholder }: { placeholder: string }) {
+  const pathname = usePathname();
+  console.log(pathname)
+  const { replace } = useRouter();
+
+  const serarchParams= useSearchParams()
+
+  function handleSearch(term:string){
+
+    const params= new URLSearchParams(serarchParams)
+    if (term) {
+      params.set('query', term);
+      console.log(params.toString())
+    } else {
+      params.delete('query');
+    }
+    replace(`${pathname}?${params.toString()}`);
+    // console.log(term)
+  }
   return (
     <div className="relative flex flex-1 flex-shrink-0">
       <label htmlFor="search" className="sr-only">
         Search
       </label>
       <input
+        onChange={(e)=>handleSearch(e.target.value)}
+        defaultValue={serarchParams.get('query')?.toString()}
         className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
         placeholder={placeholder}
       />
@@ -16,3 +38,5 @@ export default function Search({ placeholder }: { placeholder: string }) {
     </div>
   );
 }
+
+
